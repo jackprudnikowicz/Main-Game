@@ -10,18 +10,21 @@ import javafx.scene.layout.Background;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	boolean Gameon;
+	boolean Gameon, Eggdrop, Duckdead;
 	Texture txtBg, txtGuy, txtRng, txtDuck, txtEgg;
 	Sprite sprGuy, sprDuck, sprEgg;
 	int nScreen=1, nHealth=3;
+	float fEggY;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		Gameon=false;
+		Eggdrop = false;
+		Duckdead = false;
 		txtBg = new Texture("Background.jpg");
 		txtGuy = new Texture("0.png");
-		txtRng = new Texture("Range.jpg");
+		txtRng = new Texture("Range.png");
 		txtDuck = new Texture("Duck.png");
 		txtEgg = new Texture("Egg.png");
 		sprGuy = new Sprite(txtGuy);
@@ -30,10 +33,13 @@ public class MyGdxGame extends ApplicationAdapter {
 		sprDuck.setPosition(txtBg.getWidth(), 650);
 		sprEgg = new Sprite(txtEgg);
 		sprEgg.setPosition(sprDuck.getX(), sprDuck.getY());
+		fEggY = sprDuck.getY();
 	}
 
 	@Override
 	public void render () {
+		//System.out.println(dGrav);
+		System.out.println(sprDuck.getX());
 		if(Gameon==false){
 		if (nScreen == 3) {
 			if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -71,24 +77,47 @@ public class MyGdxGame extends ApplicationAdapter {
 			batch.draw(txtBg, 0, -95);
 		}
 		else if(nScreen ==2){
-			batch.draw(txtRng, 0, 0, 1000, 800);
+			batch.draw(txtRng, 0, -35, 1000, 800);
 		}
-		if(Gameon==true){
+		if(Gameon==true) {
 			batch.draw(sprDuck, sprDuck.getX(), sprDuck.getY(), 100, 80);
-			sprDuck.translateX(-2f);
-			if(sprDuck.getX()<0-sprDuck.getWidth()){
+			if(Duckdead==false) {
+				sprDuck.translateX(-2f);
+			}
+			if (sprDuck.getX() < 0 - sprDuck.getWidth()) {
 				sprDuck.setPosition(txtBg.getWidth(), 500);
 			}
-			if(sprDuck.getX()==sprGuy.getX()){
-				batch.draw(sprEgg, sprDuck.getX(), sprDuck.getY(), 50, 50);
-				sprEgg.translateY(-7f);
-				nHealth-=1;
+			if (sprDuck.getX() == sprGuy.getX()) {
+				Eggdrop = true;
 			}
-			if(nHealth == 0){
+			if (nHealth == 0) {
 				Gameon = false;
 			}
+			if (Eggdrop == true) {
+				batch.draw(sprEgg, 300, fEggY, 50, 50);
+				fEggY -= 3;
+				//sprEgg.translateY(-7f);
+			}
+			if (fEggY <= sprGuy.getY() + sprGuy.getHeight()) {
+				nHealth -= 1;
+				fEggY = sprDuck.getY();
+				Eggdrop = false;
+			}
 		}
-		//Make egg drop if statment, that starts when their x,s are equal
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+			System.out.println("asdfasdfasdf");
+			if(Gdx.input.getX()>=sprDuck.getX()&&Gdx.input.getX()<=sprDuck.getX()+sprDuck.getWidth()){
+				Duckdead=true;
+			}
+		}
+		if(Duckdead == true){
+			sprDuck.rotate(180);
+			batch.draw(sprDuck, sprDuck.getX(), sprDuck.getY(), 100, 80);
+			sprDuck.translateY(-3f);
+			if (sprDuck.getY()<200){
+				sprDuck.setPosition(sprDuck.getX(), 200);
+			}
+		}
 		batch.draw(txtGuy, sprGuy.getX(), sprGuy.getY());
 		batch.end();
 	}
