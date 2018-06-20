@@ -106,8 +106,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
 			System.out.println("asdfasdfasdf");
-			if(Gdx.input.getX()>=sprDuck.getX()&&Gdx.input.getX()<=sprDuck.getX()+sprDuck.getWidth()){
-				Duckdead=true;
+			if(sprDuck.getX()>sprGuy.getX()) {
+				if (Gdx.input.getX() >= sprDuck.getX() && Gdx.input.getX() <= sprDuck.getX() + sprDuck.getWidth()) {
+					Duckdead = true;
+				}
 			}
 		}
 		if(Duckdead == true){
